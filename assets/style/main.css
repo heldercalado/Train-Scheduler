@@ -1,0 +1,49 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+
+* {
+  font-family: 'Roboto', sans-serif;
+}
+
+body {
+    background-color: rgb(47, 151, 151);
+}
+   
+
+
+img {
+    position: absolute;
+    
+    left: 75%;
+    top: 10%;
+
+
+}
+img:hover{
+    
+    height:125px ;
+    width:125px ;
+    transition: ease-in 400ms;
+}
+
+#target {
+    
+    border-collapse: collapse;
+    width: 100%;
+}
+
+#target td, #target th {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+#target tr:nth-child(even){background-color: #0f0d0d;}
+
+#target tr:hover {background-color: rgb(70, 66, 66);}
+
+#target th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color:rgb(70, 66, 66);
+    color: white;
+}

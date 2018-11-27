@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+    crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+    crossorigin="anonymous"></script>
+<script src="https://www.gstatic.com/firebasejs/5.5.9/firebase.js"></script>
+  
+  <script src="./assets/script/news.js"></script>
+  <script src="./assets/script/flip.js"></script>
+  <script src="./assets/script/panel.js"></script>
+  <link rel="stylesheet" href="./assets/style/scroolingtext.css">
+  <link rel="stylesheet" href="./assets/style/livescheduleboard.css">
+
+  <title>Train Scheduler</title>
+
+</head>
+
+
+
+<body class="bg-secondary">
+  <div class="container-fluid" id="target">
+
+
+
+  </div>
+
+</body>
+<script>
+  
+
+
+
+
+
+  $(document).ready(function () {
+
+    var mainPanel = new controlPanel("#target");
+    var config = {
+      apiKey: "AIzaSyAV_Z4VZjSYKDCzFfNbpUHzVRgwTyTQClE",
+      authDomain: "my-cbc-demo.firebaseapp.com",
+      databaseURL: "https://my-cbc-demo.firebaseio.com",
+      projectId: "my-cbc-demo",
+      storageBucket: "my-cbc-demo.appspot.com",
+      messagingSenderId: "856722307438"
+    };
+    firebase.initializeApp(config);
+    var database = firebase.database();
+    var arrDbData = [];
+
+    database.ref('/train').on('value', function (snapshot) {
+      arrDbData = [];
+      arrDbData = snapshotToArray(snapshot);
+
+      
+
+
+    });
+   
+
+
+    function snapshotToArray(snapshot) {
+
+      var returnArr = [];
+
+      snapshot.forEach(function (childSnapshot) {
+        var item = childSnapshot.val();
+        item.key = childSnapshot.key;
+
+        returnArr.push(item);
+      });
+      mainPanel.getDataArray(returnArr);
+     
+
+      return returnArr;
+
+    }
+var myNewsFeed = new newsFeed();
+
+
+
+
+
+
+
+
+  })
+
+  
+</script>
+
+</html>

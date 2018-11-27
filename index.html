@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+        crossorigin="anonymous">
+    <script src="https://www.gstatic.com/firebasejs/5.5.9/firebase.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
+    <link rel="stylesheet" href="./assets/style/main.css">
+    <title>Train Scheduler</title>
+</head>
+<style>
+
+</style>
+
+<body class="container bg-secondary">
+
+    <div class="container bg-warning">
+        <div class="jumbotron bg-dark">
+            <div class="title h1 text-center text-white">Anytime is Train Time</div>
+            <div class="title h4 text-center text-white">Choo choo. chee chee.</div>
+            <br>
+            <a class="" href="./livescheduleboard.html">
+                <img src="./assets/images/trainshedule.png" width="120" height="120" class="align-center" alt="">
+            </a>
+        </div>
+        <div class="card bg-dark">
+            <div class="card-header bg-dark">
+                <h1 class="card-title h5 text-white">Current Train Chedure</h1>
+            </div>
+
+            <div class="card-body bg-dark">
+                <table class="table table-dark" id="target">
+                    <tr class="bg-dark">
+                        <th scope="col">Train Name</th>
+                        <th scope="col">Destination</th>
+                        <th scope="col">Frequency (minutes)</th>
+                        <th scope="col">Next Arrival</th>
+                        <th scope="col">Minutes Away</th>
+                    </tr>
+                    <tr>
+                        <td scope="col"></td>
+                        <td scope="col"></td>
+                        <td scope="col"></td>
+                        <td scope="col"></td>
+                        <td scope="col"></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <br>
+        <div class="card bg-dark">
+            <div class="card-header bg-dark">
+                <h1 class="card-title h4 text-white">Add Train</h1>
+            </div>
+            <div class="card-body bg-dark">
+                <form class="form bg-dark">
+                    <div class="form-group text-white">
+                        <label for="trainname">Train Name</label>
+                        <input type="text" class="form-control " id="trainname" placeholder="">
+                    </div>
+                    <div class="form-group text-white">
+                        <label for="destination">Destination</label>
+                        <input type="text" class="form-control" id="destination" placeholder="">
+                    </div>
+                    <div class="form-group text-white">
+                        <label for="firsttraintime">First Train Time</label>
+                        <input type="text" class="form-control" id="firsttraintime" placeholder="">
+                    </div>
+                    <div class="form-group  text-white">
+                        <label for="frequency">Frequency (min)</label>
+                        <input type="text" class="form-control" id="frequency" placeholder="">
+                    </div>
+                    <button type="submit" class="btn btn-disabled">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    </div>
+</body>
+
+<script>
+    // Initialize Firebase
+    var config = {
+        apiKey: "AIzaSyAV_Z4VZjSYKDCzFfNbpUHzVRgwTyTQClE",
+        authDomain: "my-cbc-demo.firebaseapp.com",
+        databaseURL: "https://my-cbc-demo.firebaseio.com",
+        projectId: "my-cbc-demo",
+        storageBucket: "my-cbc-demo.appspot.com",
+        messagingSenderId: "856722307438"
+    };
+    firebase.initializeApp(config);
+    var database = firebase.database();
+    var trainName = "";
+    var destination = "";
+    var frequency = "";
+    var nextArrival = "";
+    var minutesAway = 0;
+    var firstDeparture = 0;
+    var arrDbData = [];
+
+
+
+    database.ref('/train').on('value', function (snapshot) {
+        arrDbData = [];
+        arrDbData = snapshotToArray(snapshot);
+        console.log(arrDbData);
+        buildTable();
+
+
+    });
+
+    function buildTable() {
+
+        $("#target").empty();
+        var myRow = $("<tr class='bg-success'></tr>");
+        var cell = $("<th class='text-center'>Train Name</th>");
+        var cell1 = $("<th class='text-center'>Destination</th>");
+        var cell2 = $("<th class='text-center'>Frequency (min)</th>");
+        var cell3 = $("<th class='text-center'>Next Arrival</th>");
+        var cell4 = $("<th class='text-center'>Minutes Away</th>");
+
+        myRow.append(cell);
+        myRow.append(cell1);
+        myRow.append(cell2);
+        myRow.append(cell3);
+        myRow.append(cell4);
+
+        $("#target").append(myRow);
+
+        for (var i = 0; i < arrDbData.length; i++) {
+            myRow = $("<tr>");
+            cell = $("<td>");
+            cell1 = $("<td>");
+            cell2 = $("<td>");
+            cell3 = $("<td>");
+            cell4 = $("<td>");
+
+
+            cell.text(arrDbData[i].train_name);
+            cell1.text(arrDbData[i].train_destination);
+            cell2.text(arrDbData[i].train_frequency);
+
+            var nextArrival = getNextArrivalTime(arrDbData[i].train_first_departure, arrDbData[i].train_frequency)
+            cell3.text(nextArrival.toLocaleTimeString());
+            var myTimeNow = new Date();
+            var myhour = getNextArrivalTime(arrDbData[i].train_first_departure, arrDbData[i].train_frequency);
+            cell4.text(getTimeDifference(myTimeNow, myhour));
+            myRow.append(cell);
+            myRow.append(cell1);
+            myRow.append(cell2);
+            myRow.append(cell3);
+            myRow.append(cell4);
+
+            $("#target").append(myRow);
+
+        }
+    }
+
+    function snapshotToArray(snapshot) {
+        var returnArr = [];
+
+        snapshot.forEach(function (childSnapshot) {
+            var item = childSnapshot.val();
+            item.key = childSnapshot.key;
+
+            returnArr.push(item);
+        });
+
+        return returnArr;
+    }
+
+    function addToDataBase(argTrainName, argFrequency, argDestination, argFirstDeparture) {
+        var objTrain = {
+            train_name: argTrainName,
+            train_destination: argDestination,
+            train_first_departure: argFirstDeparture,
+            train_frequency: argFrequency,
+
+        }
+
+        database.ref("train").push(objTrain);
+    }
+
+    function getNextArrivalTime(argFirstDeparture, argFrequency) {
+        var currentTime = new Date();
+        argFirstDeparture = new Date(argFirstDeparture);
+        while (argFirstDeparture < currentTime) {
+
+            argFirstDeparture = addMinutes(argFirstDeparture, argFrequency);
+        }
+        return new Date(argFirstDeparture);
+    }
+
+    function convertTime(argTime) {
+        var myDate = new Date(argTime);
+
+        return myDate.toLocaleTimeString();
+    }
+
+    function addMinutes(date, minutes) {
+        return new Date(date.getTime() + minutes * 60000);
+    }
+
+    function getTimeDifference(argDateA, argDateB = new Date()) {
+        var diffMs = (argDateB - argDateA);
+        var diffDays = Math.floor(diffMs / 86400000); // days
+        var diffHrs = Math.floor((diffMs % 86400000) / 3600000); // hours  
+        var diffMins = Math.round(((diffMs % 86400000) % 3600000) / 60000); // minutes
+
+        return diffMins + (diffHrs * 60) + (diffDays * 1440);
+
+    }
+
+    function updateRecord(objData) {
+        myRef = "train/-" + objData.key;
+        database.ref(myRef).update(objData);
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+    $(document).ready(function () {
+        buildTable();
+
+        $(".btn").on("click", function (e) {
+            e.preventDefault();
+            var myhour = $("#firsttraintime").val().trim()
+            console.log(myhour);
+            var arrTime = myhour.split(":");
+            console.log(arrTime);
+            var mydate = new Date();
+            mydate.setHours(arrTime[0], arrTime[1])
+
+
+            trainName = $("#trainname").val().trim();
+            frequency = $("#frequency").val().trim();
+            firstDeparture = mydate.getTime();
+            destination = $("#destination").val().trim();
+
+            addToDataBase(trainName, frequency, destination, firstDeparture);
+
+
+
+
+        })
+
+
+
+    })
+</script>
+
+</html>

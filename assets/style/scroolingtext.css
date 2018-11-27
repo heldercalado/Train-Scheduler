@@ -1,0 +1,45 @@
+.slide_text {
+    height: 50px;	
+    overflow: hidden;
+    position: relative;
+   }
+   .slide_text h3 {
+    font-size: 17px;
+    color: white;;
+    
+    position: absolute;
+    width: 4500px;
+    height: 100%;
+    margin: 0;
+    line-height: 40px;
+    text-align: center;
+    /* Starting position */
+    -moz-transform:translateX(100%);
+    -webkit-transform:translateX(100%);	
+    transform:translateX(100%);
+    /* Apply animation to this element */	
+    -moz-animation: slide_text 60s linear infinite;
+    -webkit-animation: slide_text 60s linear infinite;
+    animation: slide_text 60s linear infinite;
+   }
+   /* Move it (define the animation) */
+   @-moz-keyframes slide_text {
+    0%   { -moz-transform: translateX(100%); }
+    100% { -moz-transform: translateX(-100%); }
+   }
+   @-webkit-keyframes slide_text {
+    0%   { -webkit-transform: translateX(100%); }
+    100% { -webkit-transform: translateX(-100%); }
+   }
+   @keyframes slide_text {
+    0%   { 
+    -moz-transform: translateX(100%); /* Firefox bug fix */
+    -webkit-transform: translateX(100%); /* Firefox bug fix */
+    transform: translateX(100%); 		
+    }
+    100% { 
+    -moz-transform: translateX(-100%); /* Firefox bug fix */
+    -webkit-transform: translateX(-100%); /* Firefox bug fix */
+    transform: translateX(-100%); 
+    }
+   }
